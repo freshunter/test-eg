@@ -47,7 +47,7 @@ class TimeServerHandler extends IoHandlerAdapter {
         logger.info("Received ---------------------" + message);
         MyRequestObject myReqOjb = (MyRequestObject) message;
         MyResponseObject myResObj = new MyResponseObject(myReqOjb.getName(),
-                myReqOjb.getValue());
+                myReqOjb.getValue()+ " from server");
         session.write(myResObj);
 
 //        String str = message.toString();
