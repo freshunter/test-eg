@@ -13,8 +13,8 @@ public class TestEntityDataBean extends DataBean {
     private static Logger log = LoggerFactory.getLogger(TestEntityDataBean.class);
 
     @Transactional
-    public TestEntity persistEntity(TestEntity profile) {
-        return this.insertByCheckUniqueKey(profile, "name", profile.getName());
+    public TestEntity persistEntity(TestEntity test) {
+        return this.insertByCheckUniqueKey(test, "name", test.getName());
     }
 
 }
