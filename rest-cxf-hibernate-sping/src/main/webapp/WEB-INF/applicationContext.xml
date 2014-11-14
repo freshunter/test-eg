@@ -1,0 +1,76 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task-4.0.xsd
+    ">
+
+	<context:property-placeholder order="1"
+		ignore-unresolvable="true" location="classpath:META-INF/database.properties" />
+	<!-- <context:property-placeholder order="2" system-properties-mode="OVERRIDE" 
+		location="classpath:META-INF/cmsstager.properties" /> -->
+	<!-- Task Scheduler with default poolSize=1 -->
+	<!-- <task:scheduler id="cmsstagerScheduler"/> -->
+
+	<!--  So set the ThreadPool -->
+	<!-- <bean id="cmsstagerExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"> 
+		<property name="corePoolSize" value="5" /> <property name="maxPoolSize" value="40" 
+		/> </bean> -->
+
+	<!-- bean post-processor for JPA annotations -->
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean id="postgres_datasource"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<!-- Use container DataSource via JNDI lookup -->
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.kkk.rest.model" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="true" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.show_sql" value="${hibernate.show_sql}" />
+				<entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+				<entry key="hibernate.dialect" value="${hibernate.dialect}" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- datasource in JNDI container e.g. JBoss or Tomcat -->
+	<!-- <bean id="kkkDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> 
+		<property name="jndiName" value="java:jboss/datasources/KKK_DS"/> </bean> -->
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		id="dataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://localhost:5432/postgres" />
+		<property name="username" value="postgres" />
+		<property name="password" value="postgres" />
+		<!-- <property name="testOnBorrow" value="true"/> <property name="testOnReturn" 
+			value="true"/> <property name="testWhileIdle" value="true"/> <property name="timeBetweenEvictionRunsMillis" 
+			value="1800000"/> <property name="numTestsPerEvictionRun" value="3"/> <property 
+			name="minEvictableIdleTimeMillis" value="1800000"/> <property name="validationQuery" 
+			value="SELECT version();"/> -->
+	</bean>
+
+	<!-- enable the configuration of transactional behavior based on annotations -->
+	<tx:annotation-driven transaction-manager="myTxManager" />
+	<bean id="myTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="postgres_datasource" />
+	</bean>
+
+	<context:component-scan base-package="com.kkk.rest" />
+
+	
+</beans>

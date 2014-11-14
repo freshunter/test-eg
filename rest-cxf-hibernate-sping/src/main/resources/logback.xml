@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{25} - %msg%n</Pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.kkk.rest" level="debug"/>
+  <logger name="org.springframework" level="info"/>
+  <logger name="org.hibernate.SQL" level="DEBUG" />  
+  <logger name="org.hibernate.jdbc" level="DEBUG"/>  
+
+  <root level="info">
+    <appender-ref ref="Console" />
+  </root>
+</configuration>
